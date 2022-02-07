@@ -1,0 +1,54 @@
+﻿@using RWA.Models.Business_domain
+@model IEnumerable<RWA.Models.Business_domain.Receipt>
+@{
+    ViewBag.Title = "AllReceipts";
+    var b = ViewBag.buyer;
+}
+
+<div class="col-12 jumboton">
+
+    <h2>
+        <span class="badge bg-success">
+            Prikaz računa odabranog kupca
+        </span>
+    </h2>
+</div>
+
+<table class="table table-hover table-striped table-sm">
+    <thead>
+        <tr>
+            <th scope="col">Broj računa</th>
+            <th scope="col">Datum izdavanja</th>
+            <th scope="col">Komercijalist</th>
+            <th scope="col">Kreditna kartica</th>
+            <th scope="col">Komentar</th>
+            <th scope="col">Odaberi račun</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var r in Model)
+        {
+            <tr class="table-active">
+                <th scope="row">@r.BrojRacuna</th>
+                <td>@r.DatumIzdavanja.ToShortDateString() </td>
+                <td>@Html.Action(controllerName: "Receipts", actionName: "SalesOfficer", routeValues: new { id = r.KomercijalistID })</td>
+                <td>@Html.Action(controllerName: "Receipts", actionName: "CreditCard", routeValues: new { id = r.KreditnaKarticaID })</td>
+                <td>@r.Komentar</td>
+                <td>
+                    @Html.ActionLink(
+                    linkText: "Odaberi",
+                    actionName: "Details",
+                    controllerName: "ReceiptDetails",
+                    routeValues: new { racunID = r.IDRacun },
+                    htmlAttributes: new { @class = "btn btn-primary btn-sm" })
+                </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<div>
+    <a href="~/buyers.aspx" class="btn btn-primary">Natrag na listu</a>
+</div>
+
+

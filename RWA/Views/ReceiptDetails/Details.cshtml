@@ -1,0 +1,91 @@
+﻿@model IEnumerable<RWA.Models.Business_domain.ItemBundle>
+@using RWA.Models.Business_domain
+@{
+    ViewBag.Title = "Details";
+}
+
+<div class="col-12 jumboton">
+    <h2>Stavke odabranog računa</h2>
+</div>
+
+<div class="items-wrapper">
+
+
+    @foreach (ItemBundle i in Model)
+    {
+        <div class="items-holder">
+            <h4>
+                <span class="badge bg-success">
+                    Stavka broj: @i.IDStavka
+                </span>
+            </h4>
+            <table class="table table-hover table-striped table-sm">
+                <tr class="table-active">
+                    <th scope="row">Količina: </th>
+                    <td>@i.Kolicina</td>
+                    <td>kom</td>
+                </tr>
+                <tr class="table-active">
+                    <th scope="row">Cijena po komadu: </th>
+                    <td>@i.CijenaPoKomadu</td>
+                    <td>kn</td>
+                </tr>
+                <tr class="table-active">
+                    <th scope="row">Popust: </th>
+                    <td>@i.PopustUPostocima</td>
+                    <td>%</td>
+                </tr>
+                <tr class="table-active">
+                    <th scope="row">Ukupna cijena: </th>
+                    <td>@i.UkupnaCijena</td>
+                    <td>kn</td>
+                </tr>
+                <tr class="table-active">
+                    <th scope="row">Proizvod: </th>
+                    <td class="detail-color">@i.NazivProizvoda</td>
+                    <td></td>
+                </tr>
+                <tr class="table-active">
+                    <th scope="row">Broj proizvoda: </th>
+                    <td>@i.BrojProizvoda</td>
+                    <td></td>
+                </tr>
+                <tr class="table-active">
+                    <th scope="row">Boja: </th>
+                    <td>@i.Boja</td>
+                    <td></td>
+                </tr>
+                <tr class="table-active">
+                    <th scope="row">Kategorija: </th>
+                    <td>@i.NazivKategorije</td>
+                    <td></td>
+                </tr>
+                <tr class="table-active">
+                    <th scope="row">Potkategorija: </th>
+                    <td>@i.NazivPotkategorije</td>
+                    <td></td>
+                </tr>
+                <tr class="table-active">
+                    <th scope="row">Kreditna kartica: </th>
+                    <td>@i.Tip</td>
+                    <td></td>
+                </tr>
+                <tr class="table-active">
+                    <th scope="row">Komercijalist: </th>
+                    <td>@i.Ime @i.Prezime</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    @Html.ActionLink(
+                    linkText: "Ažuriraj podatke",
+                    actionName: "Update",
+                    controllerName: "ReceiptDetails",
+                    routeValues: new { stavkaID = i.IDStavka, catID = i.IDKategorija },
+                    htmlAttributes: new { @class = "btn btn-primary btn-sm top-right" })
+                </tr>
+            </table>
+        </div>
+    }
+
+</div>
+    <a href="~/buyers.aspx" class="btn btn-primary float-left">Povratak</a>

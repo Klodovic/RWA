@@ -1,0 +1,92 @@
+﻿@using RWA.Models.ViewModel
+@model ProductDetails
+
+@{
+    ViewBag.Title = "Details";
+}
+
+
+@section scripts{
+    <script>
+        $('#ddlProducts').on('change', function () {
+            const id = $(this).val();
+
+            $.ajax({
+                url: '@Url.Action(controllerName: "Product", actionName: "Get")',
+                data: {id:id}
+            })
+                .done(function (product) {
+                    for (var prop in product) {
+                        $(`#${prop}`).html(product[prop]);
+                    }
+                })
+        });
+
+    </script>
+}
+
+<div class="col-12 jumboton">
+    <h2>Detalji proizvoda</h2>
+</div>
+
+<div class="col-6">
+
+    <table class="table table-hover table-striped table-sm">
+        <tr class="table-active">
+            <td>@Html.DisplayNameFor(model => model.Product.IDProizvod)</td>
+            <th scope="col" id="idproizvod">@Html.DisplayFor(model => model.Product.IDProizvod)</th>
+        </tr>
+        <tr class="table-active">
+            <td>@Html.DisplayNameFor(model => model.Product.Naziv)</td>
+            <th scope="col" id="naziv">@Html.DisplayFor(model => model.Product.Naziv)</th>
+        </tr>
+        <tr class="table-active">
+            <td>@Html.DisplayNameFor(model => model.Product.BrojProizvoda)</td>
+            <th scope="col" id="brojproizvoda">@Html.DisplayFor(model => model.Product.BrojProizvoda)</th>
+        </tr>
+        <tr class="table-active">
+            <td>@Html.DisplayNameFor(model => model.Product.Boja)</td>
+            <th scope="col" id="boja">@Html.DisplayFor(model => model.Product.Boja)</th>
+        </tr>
+        <tr class="table-active">
+            <td>@Html.DisplayNameFor(model => model.Product.MinimalnaKolicinaNaSkladistu)</td>
+            <th scope="col" id="minimalnakolicinanaskladistu">@Html.DisplayFor(model => model.Product.MinimalnaKolicinaNaSkladistu)</th>
+        </tr>
+        <tr class="table-active">
+            <td>@Html.DisplayNameFor(model => model.Product.CijenaBezPDV)</td>
+            <th scope="col" id="cijenabezpdv">@Html.DisplayFor(model => model.Product.CijenaBezPDV)</th>
+        </tr>
+        <tr class="table-active">
+            <td>Odaberi proizvod</td>
+            <th scope="col">
+                @Html.DropDownList(
+                name: "ddlProducts",
+                selectList: new SelectList(
+                    items: Model.AllProducts,
+                    dataTextField: "Naziv",
+                    dataValueField: "IDProizvod",
+                    selectedValue: Model.Product.IDProizvod),
+                    htmlAttributes: new { @class = "form-control" })
+            </th>
+        </tr>
+
+
+    </table>
+</div>
+<p>
+    @Html.ActionLink(
+    linkText: "Uredi",
+    actionName: "Edit",
+    controllerName: "Product",
+    routeValues: new { id = Model.Product.IDProizvod },
+    htmlAttributes: new { @class = "btn btn-primary"})
+
+    @Html.ActionLink(
+    linkText: "Povratak",
+    actionName: "AllProducts",
+    controllerName: "Product",
+    routeValues: new { },
+    htmlAttributes: new { @class = "btn btn-success"})
+
+</p>
+

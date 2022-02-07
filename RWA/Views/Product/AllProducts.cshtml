@@ -1,0 +1,130 @@
+﻿@model IEnumerable<RWA.Models.Business_domain.Product>
+
+@{
+    ViewBag.Title = "ALlProducts";
+}
+
+<div class="col-12 jumboton">
+    <span class="badge bg-success float-right">Ukupan broj proizvoda: @Model.Count()</span>
+    <h2>Svi proizvodi</h2>
+</div>
+<p>
+    @Html.ActionLink(
+        linkText: "Novi proizvod",
+        actionName: "Create",
+        controllerName: "Product",
+        routeValues: new { },
+    htmlAttributes: new { @class = "btn btn-success" })
+
+</p>
+
+<table class="table table-hover table-striped table-sm">
+    <tr>
+        <th scope="col">
+            @Html.DisplayNameFor(model => model.Naziv)
+        </th>
+        <th scope="col">
+            @Html.DisplayNameFor(model => model.BrojProizvoda)
+        </th>
+        <th scope="col">
+            @Html.DisplayNameFor(model => model.Boja)
+        </th>
+        <th scope="col">
+            @Html.DisplayNameFor(model => model.MinimalnaKolicinaNaSkladistu)
+        </th>
+        <th scope="col">
+            @Html.DisplayNameFor(model => model.CijenaBezPDV)
+        </th>
+        <th scope="col">
+            @Html.DisplayNameFor(model => model.PotkategorijaID)
+        </th>
+        <th scope="col"></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr class="table-active">
+            <td>
+                @Html.DisplayFor(modelItem => item.Naziv)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BrojProizvoda)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Boja)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MinimalnaKolicinaNaSkladistu)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CijenaBezPDV)
+            </td>
+            <td>
+                @Html.Action(controllerName: "SubCategory", actionName: "AllSubCategories", routeValues: new { id = item.PotkategorijaID })
+
+            </td>
+            <td>
+                @Html.ActionLink(
+                linkText: "Uredi",
+                    actionName: "Edit",
+                    controllerName: "Product",
+                    routeValues: new { id = item.IDProizvod },
+                    htmlAttributes: new { @class = "btn btn-primary btn-sm" })
+
+                @Html.ActionLink(
+                linkText: "Detalji",
+                    actionName: "Details",
+                    controllerName: "Product",
+                    routeValues: new { id = item.IDProizvod },
+                    htmlAttributes: new { @class = "btn btn-secondary btn-sm" })
+
+                @Html.ActionLink(
+                linkText: "Obriši",
+                    actionName: "Delete",
+                    controllerName: "Product",
+                    routeValues: new { id = item.IDProizvod },
+                    htmlAttributes: new { @class = "btn btn-success delete btn-sm", data_id = item.IDProizvod, data_naziv = item.Naziv })
+
+            </td>
+        </tr>
+    }
+
+</table>
+
+@section scripts{
+
+    <script>
+        $('.delete').on('click', function (e) {
+            e.preventDefault();
+
+            const { naziv, id } = this.dataset;
+
+            if (confirm(`Obrisati ${naziv}?`)) {
+                $.ajax({
+                    url: '@Url.Action(controllerName: "Product", actionName: "Delete")',
+                    data: { id: id },
+                    statusCode: {
+                        200: function () {
+                            $('.table').find(`[data-id = ${id}]`)
+                                .parents('tr').hide(500);
+                        },
+                        400: function () {
+                            console.log('Proizvod nije obrisan!!');
+                        }
+                    }
+                })
+                .done(function (data) {
+                    console.log(data);
+                })
+                .fail(function (xhr, txtStatus, error) {
+                    console.log('status', xhr.status, 'statusText', xhr.statusText);
+                    console.log('txtStatus', txtStatus);
+                    console.log('error', error);
+                });
+            }
+        });
+    </script>
+}
+
+
+

@@ -1,0 +1,135 @@
+﻿@using RWA.Models.Business_domain
+@model RWA.Models.Business_domain.Product
+
+@{
+    ViewBag.Title = "Edit";
+    List<SubCategory> sub = ViewBag.s as List<SubCategory>;
+}
+
+<div class="col-12 jumboton">
+    <span class="badge bg-warning float-right info"></span>
+    <span class="badge bg-success float-right">ID proizvoda: @Model.IDProizvod</span>
+    <h2>Uredi proizvod</h2>
+</div>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    
+<div class="form-horizontal">
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    @Html.HiddenFor(model => model.IDProizvod)
+    <div class="form-group">
+        @Html.LabelFor(model => model.Naziv, htmlAttributes: new { @class = "control-label col-md-12" })
+        <div class="col-md-6">
+            @Html.EditorFor(model => model.Naziv, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Naziv, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.BrojProizvoda, htmlAttributes: new { @class = "control-label col-md-12" })
+        <div class="col-md-6">
+            @Html.EditorFor(model => model.BrojProizvoda, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.BrojProizvoda, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Boja, htmlAttributes: new { @class = "control-label col-md-12" })
+        <div class="col-md-6">
+            @Html.EditorFor(model => model.Boja, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Boja, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.MinimalnaKolicinaNaSkladistu, htmlAttributes: new { @class = "control-label col-md-12" })
+        <div class="col-md-6">
+            @Html.EditorFor(model => model.MinimalnaKolicinaNaSkladistu, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.MinimalnaKolicinaNaSkladistu, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.CijenaBezPDV, htmlAttributes: new { @class = "control-label col-md-12" })
+        <div class="col-md-6">
+            @Html.EditorFor(model => model.CijenaBezPDV, new { htmlAttributes = new { @class = "form-control" } })
+            @*@Html.EditorFor(model => model.CijenaBezPDV, new { @type = "number", @min = "0", @step = "0.01", @value = "0" })*@
+            @Html.ValidationMessageFor(model => model.CijenaBezPDV, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.PotkategorijaID, htmlAttributes: new { @class = "control-label col-md-12" })
+        <div class="col-md-6">
+            @Html.DropDownList(
+                name: "ddlSubcategories",
+                selectList: new SelectList(
+                    items: sub,
+                    dataTextField: "Naziv",
+                    dataValueField: "IDPotkategorija",
+                    selectedValue: Model.PotkategorijaID),
+                optionLabel: ("--- Odaberi potkategoriju za ažuriranje ---"),
+                htmlAttributes: new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10 buttons">
+            <input type="submit" value="Ažuriraj" class="btn btn-primary" />
+            @Html.ActionLink(
+                linkText: "Povratak",
+                actionName: "ALlProducts",
+                controllerName: "Product",
+                routeValues: new {},
+                htmlAttributes: new { @class = "btn btn-success" })
+        </div>
+    </div>
+</div>
+}
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+<script>
+        $('form').on('submit', function (e) {
+            e.preventDefault();
+
+            const form = $(e.target);
+
+            const product = {};
+
+            if (form.valid()) {
+                const params = form.serializeArray();
+
+                params.forEach(param => {
+                    if (param.name.lastIndexOf('__') !== -1) return;
+                    let propertyName = param.name.substr(param.name.lastIndexOf('.') + 1);
+                    if (propertyName === 'ddlSubcategories') propertyName = 'PotkategorijaID';
+                    product[propertyName] = param.value;
+                })
+
+                $.ajax({
+                    url: ' @Url.Action(controllerName: "Product", actionName: "Edit")',
+                    data: product,
+                    method: 'post',
+                    statusCode: {
+                        200: function () {
+                            $('.info').html('Proizvod je ažuriran');
+                            setTimeout(function () {
+                                window.Location= ' @Url.Action(controllerName: "Product", actionName: "ALlProducts")'
+                            }, 2000)
+                        },
+                        400: function () {
+                            $('.info').html('Proizvod nije ažuriran');
+                        }
+                    }
+                })
+            }
+        })
+</script>
+}

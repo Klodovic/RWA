@@ -1,0 +1,33 @@
+﻿@model IEnumerable<RWA.Models.Business_domain.SalesOfficer>
+
+@{
+    ViewBag.Title = "SalesOfficer";
+}
+
+<h2>SalesOfficer</h2>
+
+<table class="table table-hover table-striped table-sm">
+    <thead>
+        <tr>
+            <th scope="col">Broj računa</th>
+            <th scope="col">Datum izdavanja</th>
+            <th scope="col">Komercijalist</th>
+            <th scope="col">Kreditna kartica</th>
+            <th scope="col">Komentar</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var s in Model)
+        {
+            <tr class="table-active">
+                <th scope="row">@s.IDKomercijalist</th>
+                <td>@s.Ime</td>
+                <td>@s.Prezime</td>
+
+            </tr>
+        }
+    </tbody>
+</table>
+
+

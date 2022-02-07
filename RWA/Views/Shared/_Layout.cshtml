@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+
+    <!-- Navigation -->
+    <header class="page-row">
+        <div class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="#">AdventureWorks</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarColor01">
+                    <ul class="navbar-nav me-auto">
+                        <li>@Html.ActionLink("Kupci", "", "buyers.aspx", null, new { @class = "nav-link" })</li>
+                        <li>@Html.ActionLink("Crud", "AllProducts", "Product", null, new { @class = "nav-link" })</li>
+                        <li>@Html.ActionLink("RESTfull", "Index", "Restfull", null, new { @class = "nav-link" })</li>
+                    </ul>
+
+                    @*<ul class="nav navbar-nav navbar-right">
+                        <li>@Html.ActionLink("Odjava", "SignOff", "Logoff", null, new { @class = "btn btn-outline-success btn-sm" })</li>
+                    </ul>*@
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- End of Navigation -->
+
+    <div class="container body-content page-row page-row-expanded">
+        @RenderBody()
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer-dark page-row">
+        <span>© @DateTime.Now.Year.ToString() - RWA</span>
+    </footer>
+    <!-- End of Footer -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/DataTables")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

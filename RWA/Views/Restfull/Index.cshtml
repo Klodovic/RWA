@@ -1,0 +1,176 @@
+﻿@using RWA.Models.Business_domain
+@{
+    ViewBag.Title = "Index";
+    List<SubCategory> sub = ViewBag.s as List<SubCategory>;
+}
+
+<div class="col-12 jumboton">
+    <span class="badge bg-success float-right">RESTfull</span>
+    <h2>Prikaz svih proizvoda</h2>
+</div>
+
+<ul class="nav nav-tabs" role="tablist">
+    <li class="nav-item active">
+        <a class="btn btn-primary active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Svi proizvodi</a>
+    </li>
+    <li class="nav-item">
+        <a class="btn btn-primary" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Dodaj novi proizvod</a>
+    </li>
+</ul>
+<div class="tab-content">
+    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">@Html.Action("Article")</div>
+    <div class="tab-pane fade show" id="profile" role="tabpanel" aria-labelledby="profile-tab">@Html.Action("Edit")</div>
+</div>
+
+
+
+
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Uredi proizvod</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"></span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @Html.Action("Update")
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+
+
+<script>
+    const dataTableConfig = {
+        ajax: {
+            url: '/api/articles',
+            dataSrc: ''
+        },
+        columns: [
+            { data: 'IDProizvod' },
+            { data: 'Naziv' },
+            { data: 'BrojProizvoda' },
+            { data: 'Boja' },
+            { data: 'MinimalnaKolicinaNaSkladistu' },
+            {
+                data: '',
+                render: function (data, type, article) {
+                    return `<button
+                            class = "btn btn-primary btn-sm delButton"
+                            data-id = ${article.IDProizvod}
+                            data-naziv = ${article.Naziv}
+                            data-broj = ${article.BrojProizvoda}
+                            data-boja = ${article.Boja}
+                            data-minimalnaKolicinaNaSkladistu = ${article.MinimalnaKolicinaNaSkladistu}> Obriši</button>` +
+                        `<button
+                            onclick="onEditClick(${article.IDProizvod})"
+                            class = "btn btn-secondary btn-sm editButton"> Uredi</button>`
+                }
+            }
+        ]
+    }
+
+    //Delete row (article)
+    let btnDelete;
+    const table = $('.table')
+        .dataTable(dataTableConfig)
+        .on('click', '.delButton', onDeleteClick);
+
+    function onDeleteClick(e) {
+        btnDelete = this;
+        const { id, naziv } = btnDelete.dataset;
+        if (confirm(`Obrisati proizvod: ${naziv}`))
+            deleteArticle(id);
+    }
+
+    function deleteArticle(id) {
+        $.ajax({
+            url: `/api/articles/${id}`,
+            method: 'delete'
+        })
+            .done(function (message) {
+                console.log(message);
+                table.api().row($(btnDelete).parents('tr')).remove().draw();
+            })
+            .fail(function () {
+                console.log('Proizvod nije obrisan');
+            });
+    }
+
+    var proizvodID = -1
+
+    //Edit row (article)
+    function onEditClick(IDProizvod) {
+        console.log(`ID = ${IDProizvod}`);
+        $(".modal").modal("show");
+
+        $.ajax({
+            type: 'GET',
+            url: `/api/articles/${IDProizvod}`,
+            success: function (response) {
+                console.log(response);
+
+                proizvodID = response.IDProizvod
+
+                $('.modal-body input#IDProizvod').val(response.IDProizvod);
+                $('.modal-body input#Naziv').val(response.Naziv);
+                $('.modal-body input#BrojProizvoda').val(response.BrojProizvoda);
+                $('.modal-body input#Boja').val(response.Boja);
+                $('.modal-body input#MinimalnaKolicinaNaSkladistu').val(response.MinimalnaKolicinaNaSkladistu);
+            }
+        });
+    }
+
+
+
+    //Update article
+
+    function updateArticle() {
+        console.log(`ID = ${proizvodID}`);
+
+        $.ajax({
+            type: "PUT",
+            url: `/api/articles/${proizvodID}`,
+            data: Product,
+            dataType: 'json',
+            cache: false
+        })
+            .done(function (message) {
+                console.log(message);
+                window.Location= ' @Url.Action(controllerName: "Restfull", actionName: "Index")'
+            })
+            .fail(function () {
+                console.log('Proizvod nije ažuriran');
+            });
+    }
+
+
+    //Add new product
+    $('#btnAddArticle').on('click', function () {
+        $.ajax({
+            type: "POST",
+            url: 'api/articles',
+            data: Product,
+            dataType: 'json',
+            cache: false
+        }).success(function (data) {
+            if (response.success) {
+                window.Location= ' @Url.Action(controllerName: "Restfull", actionName: "Index")'
+            }
+
+        }).error(function (xhr, txtStatus, error) {
+            console.log('status', xhr.status, 'statusText', xhr.statusText);
+            console.log('txtStatus', txtStatus);
+            console.log('error', error);
+        })
+    });
+
+</script>
+}
+
